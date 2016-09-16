@@ -6,7 +6,7 @@
 /*   By: tgauvrit <tgauvrit@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/09/14 13:37:09 by tgauvrit          #+#    #+#             */
-/*   Updated: 2016/09/14 19:18:35 by tgauvrit         ###   ########.fr       */
+/*   Updated: 2016/09/16 11:22:52 by tgauvrit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,13 @@ static void	command(uint8_t cmd, t_sock_data *sock, char *ascii)
 
 static void	child_service(t_sock_data *sock)
 {
-	char	buf[BUF_SIZE];
+	t_ftp_cmd	cmd;
 
+	perr("Child opened\n");
 	while (42) {
-		ft_bzero(buf, BUF_SIZE);
-		recv(sock->id, buf, BUF_SIZE, 0);
-		command(*((uint8_t*)buf), sock, buf + sizeof(uint8_t));
+		ft_bzero(&cmd, BUF_SIZE);
+		recv(sock->id, &cmd, BUF_SIZE, 0);
+		command(cmd.cmd, sock, cmd.ascii);
 	}
 }
 
@@ -73,6 +74,7 @@ int			main(int argc, char *argv[])
 	ft_putstr("Server listening on port ");
 	ft_putnbr(ntohs(sock.addr.sin_port));
 	ft_putstr(".\n");
+	get_root();
 	while (42)
 		service_spawner(&sock, sizeof(sockaddr_in_t));
 	return (0);

@@ -6,20 +6,64 @@
 /*   By: tgauvrit <tgauvrit@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/09/14 13:37:16 by tgauvrit          #+#    #+#             */
-/*   Updated: 2016/09/14 19:50:04 by tgauvrit         ###   ########.fr       */
+/*   Updated: 2016/09/16 12:48:53 by tgauvrit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ftp.h"
 
-t_ftp_cmd	*parse_cmd(t_ftp_cmd *cmd)
+void		output_recv(t_sock_data *sock, size_t size)
+{
+	char	buf[size + 1];
+
+	recv(sock->id, buf, size, 0);
+	buf[size] = 0;
+	ft_putendl(buf);
+}
+
+void		handle_cmd(t_sock_data *sock, t_ftp_cmd *cmd)
+{
+	size_t	size;
+
+	if (cmd->cmd == 0x0)
+		return (perr("Error: Unknown command\n"));
+	send(sock->id, cmd, BUF_SIZE, 0);
+	if (cmd->cmd == CMD_PUT)
+		client_put(sock, cmd);
+	if (cmd->cmd == CMD_GET)
+		client_get(sock, cmd);
+	recv(sock->id, &size, sizeof(size_t), 0);
+	output_recv(sock, size);
+	if (cmd->cmd == CMD_QUIT)
+		pexit("Goodbye!\n", 0);
+}
+
+t_ftp_cmd	*parse_cmd(t_ftp_cmd *cmd, char *str)
 {
 	char	*tmp;
-	size_t	len;
 
-	if ((tmp = ft_strchr(cmd->ascii, ' ')) == NULL)
-		tmp = cmd->ascii + ft_strlen(cmd->ascii);
-	len = tmp - cmd->ascii;
+	if (ft_strchr(str, '\n') != NULL)
+		*ft_strchr(str, '\n') = 0;
+	if (ft_strncmp("ls", str, 3) == 0)
+		cmd->cmd = CMD_LS;
+	else if (ft_strncmp("cd ", str, 3) == 0 || ft_strncmp("cd", str, 3) == 0)
+		cmd->cmd = CMD_CD;
+	else if (ft_strncmp("get ", str, 4) == 0)
+		cmd->cmd = CMD_GET;
+	else if (ft_strncmp("put ", str, 4) == 0)
+		cmd->cmd = CMD_PUT;
+	else if (ft_strncmp("pwd", str, 4) == 0)
+		cmd->cmd = CMD_PWD;
+	else if (ft_strncmp("quit", str, 5) == 0)
+		cmd->cmd = CMD_QUIT;
+	else
+		cmd->cmd = 0x0;
+	if ((tmp = ft_strchr(str, ' ')) == NULL)
+		tmp = str + ft_strlen(str);
+	else
+		tmp++;
+	ft_strcpy(cmd->ascii, tmp);
+	return (cmd);
 }
 
 void		client_prompt(t_sock_data *sock)
@@ -34,8 +78,7 @@ void		client_prompt(t_sock_data *sock)
 	if (ret == 1)
 		return ;
 	cmd.ascii[ret] = 0;
-	ft_putstr(cmd.ascii);
-	handle_cmd(sock, parse_cmd(&cmd));
+	handle_cmd(sock, parse_cmd(&cmd, cmd.ascii));
 }
 
 int			main(int argc, char *argv[])

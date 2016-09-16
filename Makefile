@@ -6,11 +6,13 @@
 #    By: tgauvrit <tgauvrit@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2014/11/20 16:35:37 by tgauvrit          #+#    #+#              #
-#    Updated: 2016/09/14 17:28:05 by tgauvrit         ###   ########.fr        #
+#    Updated: 2016/09/16 15:15:38 by tgauvrit         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME1 =			serveur
+NAME1_DIR =		server_space
+
+NAME1 =			$(NAME1_DIR)/serveur
 NAME2 =			client
 
 CC =			clang
@@ -32,9 +34,9 @@ SRC_DIR =		./src/
 OBJ_DIR_NAME =	obj
 OBJ_DIR =		./obj/
 
-SHARED_FILES =	print
+SHARED_FILES =	print get_dir
 FILENAMES1 :=	serveur_main cmd_cd cmd_error cmd_get cmd_ls cmd_put cmd_pwd cmd_quit
-FILENAMES2 :=	client_main
+FILENAMES2 :=	client_main client_cmd
 
 OBJ_PATHS1 :=	$(addsuffix .o,$(SHARED_FILES) $(FILENAMES1))
 OBJ_PATHS1 :=	$(addprefix $(OBJ_DIR),$(OBJ_PATHS1))
@@ -48,6 +50,7 @@ OBJ_PATHS :=	$(addprefix $(OBJ_DIR),$(OBJ_PATHS))
 all: $(NAME1) $(NAME2)
 
 $(NAME1): $(LIBFT) $(OBJ_PATHS1)
+	@/bin/mkdir -p $(NAME1_DIR)
 	$(CC) $(FLAGS) $(HEADERS) $(LIBRARIES) $(OBJ_PATHS1) -o $(NAME1)
 
 $(NAME2): $(LIBFT) $(OBJ_PATHS2)
@@ -65,6 +68,7 @@ clean:
 	/usr/bin/find . -name "$(OBJ_DIR_NAME)" -maxdepth 1 -type d -empty -delete
 
 fclean: clean
-	-/bin/rm -f $(NAME1) $(NAME2)
+	-/bin/rm -f  $(NAME1) $(NAME2)
+	/usr/bin/find . -name "$(NAME1_DIR)" -maxdepth 1 -type d -empty -delete
 
 re: fclean all
