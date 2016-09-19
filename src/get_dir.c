@@ -6,7 +6,7 @@
 /*   By: tgauvrit <tgauvrit@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/09/16 09:11:40 by tgauvrit          #+#    #+#             */
-/*   Updated: 2016/09/16 11:48:38 by tgauvrit         ###   ########.fr       */
+/*   Updated: 2016/09/19 13:03:02 by tgauvrit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ char	*get_root(void)
 		pexit("Error: getcwd failed\n", 1);
 	return (root);
 }
-
 
 char	*get_dir(void)
 {
@@ -43,8 +42,8 @@ char	*basename(char *str)
 	while (tmp != str)
 	{
 		if (*(tmp - 1) == '/')
-			break;
+			break ;
 		tmp--;
 	}
-	return tmp;
+	return (tmp);
 }

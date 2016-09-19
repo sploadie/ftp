@@ -6,7 +6,7 @@
 /*   By: tgauvrit <tgauvrit@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/09/14 16:56:15 by tgauvrit          #+#    #+#             */
-/*   Updated: 2016/09/16 15:05:37 by tgauvrit         ###   ########.fr       */
+/*   Updated: 2016/09/19 13:20:56 by tgauvrit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ static int	recv_to_file(t_sock_data *sock, size_t size, char *file_path)
 	char	buf[size];
 
 	recv(sock->id, buf, size, MSG_WAITALL);
-	if ((fd = open(file_path, O_CREAT | O_TRUNC | O_WRONLY)) < 0)
+	if ((fd = open(file_path, O_CREAT | O_TRUNC | O_WRONLY, 0644)) < 0)
 	{
 		perr("Error: could not open server file\n");
 		return (0);
@@ -42,9 +42,10 @@ void		cmd_put(t_sock_data *sock, char *ascii)
 	if (size > 0)
 		ret = recv_to_file(sock, size, basename(ascii));
 	if (ret == 0)
-		size = ft_strlen((buf = ft_strdup("Server did not save file\n")));
+		buf = ft_strdup("Server did not save file");
 	else
-		size = ft_strlen((buf = ft_strdup("Server saved file\n")));
+		buf = ft_strdup("Server saved file");
+	size = ft_strlen(buf);
 	send(sock->id, &size, sizeof(size_t), 0);
 	send(sock->id, buf, size, 0);
 	free(buf);

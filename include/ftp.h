@@ -6,7 +6,7 @@
 /*   By: tgauvrit <tgauvrit@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2015/02/03 15:35:45 by tgauvrit          #+#    #+#             */
-/*   Updated: 2016/09/16 14:34:20 by tgauvrit         ###   ########.fr       */
+/*   Updated: 2016/09/19 13:12:38 by tgauvrit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,6 @@
 # include <dirent.h>
 # include "libft.h"
 
-// # include <string.h>
-// # include <stdio.h>
-// # include <sys/sendfile.h>
-
 # define BUF_SIZE 256
 # define ASC_SIZE BUF_SIZE - sizeof(uint8_t)
 
@@ -42,12 +38,12 @@
 # define CMD_PWD 0x5
 # define CMD_QUIT 0x6
 
-typedef struct sockaddr_in	sockaddr_in_t;
+typedef struct sockaddr_in	t_sockaddr_in;
 
 typedef struct		s_sock_data
 {
 	int				id;
-	sockaddr_in_t	addr;
+	t_sockaddr_in	addr;
 }					t_sock_data;
 
 typedef struct		s_ftp_cmd
@@ -72,6 +68,6 @@ void				client_get(t_sock_data *sock, t_ftp_cmd *cmd);
 void				client_put(t_sock_data *sock, t_ftp_cmd *cmd);
 
 void				pexit(char *str, int outno);
-void				perr(char *str);
+int					perr(char *str);
 
 #endif

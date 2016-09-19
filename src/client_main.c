@@ -6,7 +6,7 @@
 /*   By: tgauvrit <tgauvrit@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/09/14 13:37:16 by tgauvrit          #+#    #+#             */
-/*   Updated: 2016/09/16 12:48:53 by tgauvrit         ###   ########.fr       */
+/*   Updated: 2016/09/19 13:09:05 by tgauvrit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void		handle_cmd(t_sock_data *sock, t_ftp_cmd *cmd)
 	size_t	size;
 
 	if (cmd->cmd == 0x0)
-		return (perr("Error: Unknown command\n"));
+		return ((void)perr("Error: Unknown command\n"));
 	send(sock->id, cmd, BUF_SIZE, 0);
 	if (cmd->cmd == CMD_PUT)
 		client_put(sock, cmd);

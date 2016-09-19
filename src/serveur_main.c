@@ -6,7 +6,7 @@
 /*   By: tgauvrit <tgauvrit@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/09/14 13:37:09 by tgauvrit          #+#    #+#             */
-/*   Updated: 2016/09/16 11:22:52 by tgauvrit         ###   ########.fr       */
+/*   Updated: 2016/09/19 13:13:00 by tgauvrit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,8 @@ static void	child_service(t_sock_data *sock)
 	t_ftp_cmd	cmd;
 
 	perr("Child opened\n");
-	while (42) {
+	while (42)
+	{
 		ft_bzero(&cmd, BUF_SIZE);
 		recv(sock->id, &cmd, BUF_SIZE, 0);
 		command(cmd.cmd, sock, cmd.ascii);
@@ -76,6 +77,6 @@ int			main(int argc, char *argv[])
 	ft_putstr(".\n");
 	get_root();
 	while (42)
-		service_spawner(&sock, sizeof(sockaddr_in_t));
+		service_spawner(&sock, sizeof(t_sockaddr_in));
 	return (0);
 }

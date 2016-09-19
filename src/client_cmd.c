@@ -6,7 +6,7 @@
 /*   By: tgauvrit <tgauvrit@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/09/16 12:49:20 by tgauvrit          #+#    #+#             */
-/*   Updated: 2016/09/16 15:05:02 by tgauvrit         ###   ########.fr       */
+/*   Updated: 2016/09/19 15:07:14 by tgauvrit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ static void		recv_to_file(t_sock_data *sock, size_t size, char *file_path)
 	char	buf[size];
 
 	recv(sock->id, buf, size, MSG_WAITALL);
-	if ((fd = open(file_path, O_CREAT | O_TRUNC | O_WRONLY)) < 0)
-		return (perr("Error: could not open local file\n"));
+	if ((fd = open(file_path, O_CREAT | O_TRUNC | O_WRONLY, 0644)) < 0)
+		return ((void)perr("Error: could not open local file\n"));
 	write(fd, buf, size);
 	close(fd);
 }
@@ -50,21 +50,40 @@ static size_t	file_size(int fd)
 	return (buf.st_size);
 }
 
+static int		is_dir(char *name)
+{
+	int			fd;
+	struct stat	buf;
+	int			ret;
+
+	if ((fd = open(name, O_RDONLY)) == -1)
+		return (0);
+	ret = fstat(fd, &buf);
+	close(fd);
+	if (ret == -1)
+		return (0);
+	if (buf.st_mode & S_IFDIR)
+		return (1);
+	return (0);
+}
+
 void			client_put(t_sock_data *sock, t_ftp_cmd *cmd)
 {
 	int		fd;
 	size_t	size;
 	void	*buf;
 
-	if ((fd = open(cmd->ascii, O_RDONLY)) < 0)
-		return (perr("Error: could not open local file\n"));
+	fd = 0;
+	if (is_dir(cmd->ascii) || ((fd = open(cmd->ascii, O_RDONLY)) < 0))
+	{
+		size = perr("Error: could not open local file\n");
+		send(sock->id, &size, sizeof(size_t), 0);
+		return ;
+	}
 	size = file_size(fd);
 	buf = mmap(0, size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (buf == NULL)
-	{
-		size = 0;
-		perr("Error: Could not allocate space for local file\n");
-	}
+		size = perr("Error: Could not allocate space for local file\n");
 	send(sock->id, &size, sizeof(size_t), 0);
 	if (size > 0)
 		send(sock->id, buf, size, 0);

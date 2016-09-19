@@ -6,7 +6,7 @@
 /*   By: tgauvrit <tgauvrit@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/09/14 13:36:48 by tgauvrit          #+#    #+#             */
-/*   Updated: 2016/09/14 15:47:48 by tgauvrit         ###   ########.fr       */
+/*   Updated: 2016/09/19 13:08:07 by tgauvrit         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,8 @@ void	pexit(char *str, int outno)
 	exit(outno);
 }
 
-void	perr(char *str)
+int		perr(char *str)
 {
 	write(2, str, ft_strlen(str));
+	return (0);
 }
